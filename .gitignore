@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+display_preview.png
+.DS_Store
