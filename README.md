@@ -12,6 +12,7 @@ POST to `/notify` and it renders text on the display, plays a sound, and blinks 
 - [Waveshare 2.13inch E-Paper HAT V4](https://www.waveshare.com/2.13inch-e-paper-hat.htm) (250×122px) — plugs directly onto the 40-pin GPIO header
 - LED + ~330Ω resistor wired between GPIO 18 (pin 12) and GND (pin 14)
 - USB audio adapter (the Pi Zero has no built-in audio out)
+- Zero Spy Camera (connects via the Pi Zero's CSI ribbon cable)
 
 ---
 
@@ -33,23 +34,22 @@ SSH in and update:
 sudo apt update && sudo apt upgrade -y
 ```
 
-Install audio tools and fonts:
+Install audio tools, fonts, and the camera library:
 
 ```bash
-sudo apt install -y mpg123 alsa-utils fonts-dejavu-core
+sudo apt install -y mpg123 alsa-utils fonts-dejavu-core python3-picamera2
 ```
 
-`aplay` (for WAV playback) is included in `alsa-utils`. `fonts-dejavu-core` provides the font used for display rendering.
+`aplay` (for WAV playback) is included in `alsa-utils`. `fonts-dejavu-core` provides the font used for display rendering. `python3-picamera2` is the camera library — it's not on PyPI so it must be installed via apt.
 
-### 3. Enable SPI
+### 3. Enable SPI and camera
 
-The e-ink display communicates over SPI, which is off by default:
+Both are off by default. Run `sudo raspi-config` and enable:
 
-```bash
-sudo raspi-config
-```
+- **Interface Options → SPI → Yes** (e-ink display)
+- **Interface Options → Camera → Yes** (spy camera)
 
-Navigate to **Interface Options → SPI → Yes**. Reboot when prompted:
+Reboot when prompted:
 
 ```bash
 sudo reboot
@@ -138,6 +138,11 @@ curl -X POST http://watsit.local:6000/notify \
 ```
 
 `sound` can be `true` (plays `chord.wav`) or any filename stem from the `sounds/` directory.
+
+```bash
+# Snapshot from camera
+curl http://watsit.local:6000/snapshot --output snap.jpg
+```
 
 ---
 

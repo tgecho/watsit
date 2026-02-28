@@ -1,10 +1,11 @@
 import os
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 
 from hardware.display import EinkDisplay, MockDisplay
 from hardware.audio import AudioPlayer, MockAudioPlayer
 from hardware.leds import LEDController, MockLEDController
+from hardware.camera import Camera, MockCamera
 from notifier import Notifier
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ MOCK = os.environ.get("MOCK_HARDWARE", "1") == "1"
 display = MockDisplay() if MOCK else EinkDisplay()
 audio = MockAudioPlayer() if MOCK else AudioPlayer()
 leds = MockLEDController() if MOCK else LEDController()
+camera = MockCamera() if MOCK else Camera()
 
 notifier = Notifier(display, audio, leds)
 
@@ -30,6 +32,11 @@ def notify():
         leds=data.get("leds", False),
     )
     return jsonify({"ok": True})
+
+
+@app.route("/snapshot")
+def snapshot():
+    return Response(camera.capture(), mimetype="image/jpeg")
 
 
 if __name__ == "__main__":
