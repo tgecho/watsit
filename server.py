@@ -14,8 +14,8 @@ MOCK = os.environ.get("MOCK_HARDWARE", "1") == "1"
 
 display = MockDisplay() if MOCK else EinkDisplay()
 audio = MockAudioPlayer() if MOCK else AudioPlayer()
-leds = MockLEDController() if MOCK else LEDController()
-camera = MockCamera() if MOCK else Camera()
+leds = MockLEDController()# if MOCK else LEDController()
+camera = MockCamera() #if MOCK else Camera()
 
 notifier = Notifier(display, audio, leds)
 
